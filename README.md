@@ -1,5 +1,7 @@
 # terraform-provider-resolve
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Vulnetix/terraform-provider-resolve)
+
 The `vulnetix/resolve` provider for Terraform and OpenTofu. Each resource is one `vulnetix.com/v1` config document, applied through the same server-side engine as `vulnetix config apply` and the console's Download as code. Resources are generated from the kind schemas in [config-schemas](https://github.com/Vulnetix/config-schemas).
 
 Reference docs for every resource and data source are in [docs/](docs/), and are what the Terraform and OpenTofu registries publish.
