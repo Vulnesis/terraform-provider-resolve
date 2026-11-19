@@ -89,3 +89,14 @@ require (
 )
 
 tool github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+
+exclude (
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.3.0
+)
+
+exclude (
+	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
+	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+	golang.org/x/net v0.0.0-20220722155237-a158d28d115b
+)

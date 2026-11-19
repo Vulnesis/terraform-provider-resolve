@@ -17,10 +17,10 @@ import (
 
 // Environment variables the provider reads when an argument is not set.
 const (
-	EnvAPIKey   = "VULNETIX_API_KEY"
-	EnvOrgID    = "VULNETIX_ORG_ID"
-	EnvToken    = "VULNETIX_API_TOKEN"
-	EnvEndpoint = "VULNETIX_ENDPOINT"
+	EnvAPIKey   = "VULNESIS_API_KEY"
+	EnvOrgID    = "VULNESIS_ORG_ID"
+	EnvToken    = "VULNESIS_API_TOKEN"
+	EnvEndpoint = "VULNESIS_ENDPOINT"
 )
 
 // roleNote is appended to every credential argument: what the principal must
@@ -60,13 +60,13 @@ func (p *vulnetixProvider) Metadata(_ context.Context, _ provider.MetadataReques
 
 func (p *vulnetixProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Manage Vulnetix configuration as code. Every resource is one " +
+		MarkdownDescription: "Manage Vulnesis configuration as code. Every resource is one " +
 			"`vulnetix.com/v1` config document, generated from the kind schemas in " +
-			"[config-schemas](https://github.com/Vulnetix/config-schemas), and applied through the same " +
+			"[config-schemas](https://github.com/Vulnesis/config-schemas), and applied through the same " +
 			"server-side engine as `vulnetix config apply`.",
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "The Vulnetix API base URL. Defaults to `$" + EnvEndpoint + "`, then `" + client.DefaultEndpoint + "`.",
+				MarkdownDescription: "The Vulnesis API base URL. Defaults to `$" + EnvEndpoint + "`, then `" + client.DefaultEndpoint + "`.",
 				Optional:            true,
 			},
 			"api_key": schema.StringAttribute{
@@ -82,7 +82,7 @@ func (p *vulnetixProvider) Schema(_ context.Context, _ provider.SchemaRequest, r
 			},
 			"token": schema.StringAttribute{
 				MarkdownDescription: "A bearer token, sent as `Authorization: Bearer <token>`: an Authentik OAuth2 " +
-					"access token (for example from a client-credentials grant) or a Vulnetix session JWT. " +
+					"access token (for example from a client-credentials grant) or a Vulnesis session JWT. " +
 					"Defaults to `$" + EnvToken + "`. Set either `token`, or `api_key` and `org_id`, not both. " + roleNote,
 				Optional:  true,
 				Sensitive: true,
@@ -129,7 +129,7 @@ func checkCredentials(apiKey, orgID, token string) diag.Diagnostics {
 	var d diag.Diagnostics
 	switch {
 	case apiKey != "" && token != "":
-		d.AddError("Two Vulnetix credentials",
+		d.AddError("Two Vulnesis credentials",
 			"Both an ApiKey (api_key / "+EnvAPIKey+") and a bearer token (token / "+EnvToken+") are set. "+
 				"Configure one: api_key with org_id, or token.")
 	case apiKey != "" && orgID == "":
@@ -139,7 +139,7 @@ func checkCredentials(apiKey, orgID, token string) diag.Diagnostics {
 		d.AddError("org_id needs api_key",
 			"org_id is set without an api_key. Set api_key or "+EnvAPIKey+", or use token or "+EnvToken+" instead.")
 	case apiKey == "" && token == "":
-		d.AddWarning("No Vulnetix credentials",
+		d.AddWarning("No Vulnesis credentials",
 			"Set api_key and org_id ("+EnvAPIKey+" and "+EnvOrgID+"), or token ("+EnvToken+"). "+
 				"Every request will be refused without one. The principal must be an owner or admin; "+
 				"an admin or owner service account's ApiKey is the recommended automation credential.")

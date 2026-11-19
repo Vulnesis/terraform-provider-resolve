@@ -308,7 +308,7 @@ func redacted(d client.Document) client.Document {
 	_ = dec.Decode(&out)
 	for _, k := range allTestKinds() {
 		if k.Kind == d.Kind {
-			redactFields(out.Spec, k.Fields, "VULNETIX_"+strings.ToUpper(k.TypeName))
+			redactFields(out.Spec, k.Fields, "VULNESIS_"+strings.ToUpper(k.TypeName))
 		}
 	}
 	return out

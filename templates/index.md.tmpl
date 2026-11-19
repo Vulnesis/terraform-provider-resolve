@@ -20,10 +20,10 @@ Run `terraform init` (or `tofu init`). OpenTofu reads the same `vulnetix/resolve
 
 ## Authentication
 
-The provider uses the credentials the Vulnetix CLI and API already accept; there is no separate Terraform token. Configure exactly one of:
+The provider uses the credentials the Vulnesis CLI and API already accept; there is no separate Terraform token. Configure exactly one of:
 
-- **An ApiKey** (recommended): `api_key` with `org_id`, or `VULNETIX_API_KEY` with `VULNETIX_ORG_ID`. Sent as `Authorization: ApiKey <org_id>:<api_key>`. A key that already starts with `<org_id>:` is not prefixed twice.
-- **A bearer token**: `token`, or `VULNETIX_API_TOKEN`. An Authentik OAuth2 access token (for example from a client-credentials grant) or a Vulnetix session JWT, sent as `Authorization: Bearer <token>`. It names its own organisation, so there is no `org_id`.
+- **An ApiKey** (recommended): `api_key` with `org_id`, or `VULNESIS_API_KEY` with `VULNESIS_ORG_ID`. Sent as `Authorization: ApiKey <org_id>:<api_key>`. A key that already starts with `<org_id>:` is not prefixed twice.
+- **A bearer token**: `token`, or `VULNESIS_API_TOKEN`. An Authentik OAuth2 access token (for example from a client-credentials grant) or a Vulnesis session JWT, sent as `Authorization: Bearer <token>`. It names its own organisation, so there is no `org_id`.
 
 Setting both an ApiKey and a bearer token is an error. With neither, the provider warns and every request is refused.
 
@@ -37,7 +37,7 @@ A bearer token instead of the ApiKey:
 
 {{ tffile "examples/provider/bearer.tf" }}
 
-`VULNETIX_ENDPOINT` points the provider at another API base URL, such as a staging tenant's.
+`VULNESIS_ENDPOINT` points the provider at another API base URL, such as a staging tenant's.
 
 ## Resources
 

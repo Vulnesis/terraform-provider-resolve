@@ -69,7 +69,7 @@ resource "vulnetix_ai_governance_list" "approved_skills" {
 
 ### Reference
 
-Every argument that has a schema default, set to that default, plus the required arguments. Planned against a tenant it only sets values the tenant left unset. Every kind's reference file is also in [Vulnetix/platform-iac-examples](https://github.com/Vulnetix/platform-iac-examples), with the same document as YAML.
+Every argument that has a schema default, set to that default, plus the required arguments. Planned against a tenant it only sets values the tenant left unset. Every kind's reference file is also in [Vulnesis/platform-iac-examples](https://github.com/Vulnesis/platform-iac-examples), with the same document as YAML.
 
 ```terraform
 # Every argument with a schema default, set to that default, plus the required

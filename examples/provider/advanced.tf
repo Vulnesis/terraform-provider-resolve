@@ -11,11 +11,11 @@ variable "vulnetix_api_key" {
 
 # Advanced: every argument, with the ApiKey passed as variables. Set them with
 # TF_VAR_vulnetix_org_id and TF_VAR_vulnetix_api_key, or leave api_key and
-# org_id out and set VULNETIX_API_KEY and VULNETIX_ORG_ID instead.
+# org_id out and set VULNESIS_API_KEY and VULNESIS_ORG_ID instead.
 provider "vulnetix" {
-  # The console API. Defaults to $VULNETIX_ENDPOINT, then
-  # https://www.vulnetix.com/api/site/v1.
-  endpoint = "https://www.vulnetix.com/api/site/v1"
+  # The console API. Defaults to $VULNESIS_ENDPOINT, then
+  # https://www.vulnes.is/api/site/v1.
+  endpoint = "https://www.vulnes.is/api/site/v1"
 
   # Sent as "Authorization: ApiKey <org_id>:<api_key>". The principal must be
   # an owner or admin; a member is refused with HTTP 403 on apply.

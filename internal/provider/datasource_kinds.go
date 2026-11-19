@@ -34,7 +34,7 @@ func (d *kindsDataSource) Metadata(_ context.Context, req datasource.MetadataReq
 
 func (d *kindsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "The config kinds the Vulnetix server applies, with their JSON Schemas (`GET /config/kinds`). " +
+		MarkdownDescription: "The config kinds the Vulnesis server applies, with their JSON Schemas (`GET /config/kinds`). " +
 			"Use it to check that a kind is served before applying it.",
 		Attributes: map[string]schema.Attribute{
 			"api_version":    schema.StringAttribute{Computed: true, MarkdownDescription: "The document format version, `vulnetix.com/v1`."},

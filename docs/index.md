@@ -1,12 +1,12 @@
 ---
 page_title: "vulnetix Provider"
 description: |-
-  Manage Vulnetix configuration as code. Every resource is one vulnetix.com/v1 config document, generated from the kind schemas in config-schemas https://github.com/Vulnetix/config-schemas, and applied through the same server-side engine as vulnetix config apply.
+  Manage Vulnesis configuration as code. Every resource is one vulnetix.com/v1 config document, generated from the kind schemas in config-schemas https://github.com/Vulnesis/config-schemas, and applied through the same server-side engine as vulnetix config apply.
 ---
 
 # vulnetix Provider
 
-Manage Vulnetix configuration as code. Every resource is one `vulnetix.com/v1` config document, generated from the kind schemas in [config-schemas](https://github.com/Vulnetix/config-schemas), and applied through the same server-side engine as `vulnetix config apply`.
+Manage Vulnesis configuration as code. Every resource is one `vulnetix.com/v1` config document, generated from the kind schemas in [config-schemas](https://github.com/Vulnesis/config-schemas), and applied through the same server-side engine as `vulnetix config apply`.
 
 Each resource is one config kind. Its arguments are the kind's `spec`, in snake case (`blockMalware` is `block_malware`), beside `name`, `labels` and `annotations` from its `metadata`. Every resource page shows a **Minimal** example (only the required arguments), an **Advanced** example (every argument) and how to import an existing object.
 
@@ -24,7 +24,7 @@ terraform {
 }
 
 # Minimal. The ApiKey of an admin or owner service account is read from
-# VULNETIX_API_KEY and VULNETIX_ORG_ID, so nothing secret is in the
+# VULNESIS_API_KEY and VULNESIS_ORG_ID, so nothing secret is in the
 # configuration. Pass both from your CI secret store.
 provider "vulnetix" {}
 ```
@@ -33,10 +33,10 @@ Run `terraform init` (or `tofu init`). OpenTofu reads the same `vulnetix/resolve
 
 ## Authentication
 
-The provider uses the credentials the Vulnetix CLI and API already accept; there is no separate Terraform token. Configure exactly one of:
+The provider uses the credentials the Vulnesis CLI and API already accept; there is no separate Terraform token. Configure exactly one of:
 
-- **An ApiKey** (recommended): `api_key` with `org_id`, or `VULNETIX_API_KEY` with `VULNETIX_ORG_ID`. Sent as `Authorization: ApiKey <org_id>:<api_key>`. A key that already starts with `<org_id>:` is not prefixed twice.
-- **A bearer token**: `token`, or `VULNETIX_API_TOKEN`. An Authentik OAuth2 access token (for example from a client-credentials grant) or a Vulnetix session JWT, sent as `Authorization: Bearer <token>`. It names its own organisation, so there is no `org_id`.
+- **An ApiKey** (recommended): `api_key` with `org_id`, or `VULNESIS_API_KEY` with `VULNESIS_ORG_ID`. Sent as `Authorization: ApiKey <org_id>:<api_key>`. A key that already starts with `<org_id>:` is not prefixed twice.
+- **A bearer token**: `token`, or `VULNESIS_API_TOKEN`. An Authentik OAuth2 access token (for example from a client-credentials grant) or a Vulnesis session JWT, sent as `Authorization: Bearer <token>`. It names its own organisation, so there is no `org_id`.
 
 Setting both an ApiKey and a bearer token is an error. With neither, the provider warns and every request is refused.
 
@@ -58,11 +58,11 @@ variable "vulnetix_api_key" {
 
 # Advanced: every argument, with the ApiKey passed as variables. Set them with
 # TF_VAR_vulnetix_org_id and TF_VAR_vulnetix_api_key, or leave api_key and
-# org_id out and set VULNETIX_API_KEY and VULNETIX_ORG_ID instead.
+# org_id out and set VULNESIS_API_KEY and VULNESIS_ORG_ID instead.
 provider "vulnetix" {
-  # The console API. Defaults to $VULNETIX_ENDPOINT, then
-  # https://www.vulnetix.com/api/site/v1.
-  endpoint = "https://www.vulnetix.com/api/site/v1"
+  # The console API. Defaults to $VULNESIS_ENDPOINT, then
+  # https://www.vulnes.is/api/site/v1.
+  endpoint = "https://www.vulnes.is/api/site/v1"
 
   # Sent as "Authorization: ApiKey <org_id>:<api_key>". The principal must be
   # an owner or admin; a member is refused with HTTP 403 on apply.
@@ -81,20 +81,20 @@ A bearer token instead of the ApiKey:
 variable "vulnetix_token" {
   type        = string
   sensitive   = true
-  description = "An Authentik OAuth2 access token or a Vulnetix session JWT, for an owner or admin."
+  description = "An Authentik OAuth2 access token or a Vulnesis session JWT, for an owner or admin."
 }
 
 # Bearer alternative to the ApiKey: an Authentik access token, for example
 # from a client-credentials grant, sent as "Authorization: Bearer <token>".
 # It names its own organisation, so there is no org_id. Set either token or
-# api_key with org_id, never both. Leave it out and set VULNETIX_API_TOKEN to
+# api_key with org_id, never both. Leave it out and set VULNESIS_API_TOKEN to
 # keep it out of the configuration.
 provider "vulnetix" {
   token = var.vulnetix_token
 }
 ```
 
-`VULNETIX_ENDPOINT` points the provider at another API base URL, such as a staging tenant's.
+`VULNESIS_ENDPOINT` points the provider at another API base URL, such as a staging tenant's.
 
 ## Resources
 
@@ -185,8 +185,8 @@ A name the console allowed that the name pattern does not (capitals or spaces, s
 
 ### Optional
 
-- `api_key` (String, Sensitive) The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. Use it with `org_id`. Defaults to `$VULNETIX_API_KEY`. Set either `api_key` and `org_id`, or `token`, not both. The principal must be an owner or admin of the organisation: a service account created with the admin or owner role is the recommended automation credential, and its ApiKey the recommended way to authenticate. A member is refused with HTTP 403 on apply.
-- `endpoint` (String) The Vulnetix API base URL. Defaults to `$VULNETIX_ENDPOINT`, then `https://www.vulnetix.com/api/site/v1`.
+- `api_key` (String, Sensitive) The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. Use it with `org_id`. Defaults to `$VULNESIS_API_KEY`. Set either `api_key` and `org_id`, or `token`, not both. The principal must be an owner or admin of the organisation: a service account created with the admin or owner role is the recommended automation credential, and its ApiKey the recommended way to authenticate. A member is refused with HTTP 403 on apply.
+- `endpoint` (String) The Vulnesis API base URL. Defaults to `$VULNESIS_ENDPOINT`, then `https://www.vulnes.is/api/site/v1`.
 - `manager` (String) The manager recorded as the owner of every object this provider applies. A GitOps apply with `--prune` only deletes objects it manages itself. Defaults to `terraform`.
-- `org_id` (String) The organisation UUID the `api_key` belongs to. Defaults to `$VULNETIX_ORG_ID`. Required with `api_key`; not needed with `token`, which already names its organisation.
-- `token` (String, Sensitive) A bearer token, sent as `Authorization: Bearer <token>`: an Authentik OAuth2 access token (for example from a client-credentials grant) or a Vulnetix session JWT. Defaults to `$VULNETIX_API_TOKEN`. Set either `token`, or `api_key` and `org_id`, not both. The principal must be an owner or admin of the organisation: a service account created with the admin or owner role is the recommended automation credential, and its ApiKey the recommended way to authenticate. A member is refused with HTTP 403 on apply.
+- `org_id` (String) The organisation UUID the `api_key` belongs to. Defaults to `$VULNESIS_ORG_ID`. Required with `api_key`; not needed with `token`, which already names its organisation.
+- `token` (String, Sensitive) A bearer token, sent as `Authorization: Bearer <token>`: an Authentik OAuth2 access token (for example from a client-credentials grant) or a Vulnesis session JWT. Defaults to `$VULNESIS_API_TOKEN`. Set either `token`, or `api_key` and `org_id`, not both. The principal must be an owner or admin of the organisation: a service account created with the admin or owner role is the recommended automation credential, and its ApiKey the recommended way to authenticate. A member is refused with HTTP 403 on apply.

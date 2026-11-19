@@ -1,8 +1,8 @@
 # terraform-provider-resolve
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Vulnetix/terraform-provider-resolve)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Vulnesis/terraform-provider-resolve)
 
-The `vulnetix/resolve` provider for Terraform and OpenTofu. Each resource is one `vulnetix.com/v1` config document, applied through the same server-side engine as `vulnetix config apply` and the console's Download as code. Resources are generated from the kind schemas in [config-schemas](https://github.com/Vulnetix/config-schemas).
+The `vulnetix/resolve` provider for Terraform and OpenTofu. Each resource is one `vulnetix.com/v1` config document, applied through the same server-side engine as `vulnetix config apply` and the console's Download as code. Resources are generated from the kind schemas in [config-schemas](https://github.com/Vulnesis/config-schemas).
 
 Reference docs for every resource and data source are in [docs/](docs/), and are what the Terraform and OpenTofu registries publish.
 
@@ -19,7 +19,7 @@ terraform {
   }
 }
 
-provider "vulnetix" {} # ApiKey from VULNETIX_API_KEY and VULNETIX_ORG_ID
+provider "vulnetix" {} # ApiKey from VULNESIS_API_KEY and VULNESIS_ORG_ID
 
 resource "vulnetix_quality_gate" "default" {
   severity      = "high"
@@ -31,7 +31,7 @@ Then `terraform init && terraform apply`, or `tofu init && tofu apply`. OpenTofu
 
 ## Publishing to the registries
 
-The registry address is `vulnetix/resolve` (namespace `vulnetix`, type `resolve`), while resources keep the `vulnetix_` prefix from the local name `vulnetix` in `required_providers`. Both the Terraform Registry and the OpenTofu registry require the GitHub repository to be named `terraform-provider-{type}`, which is why this repository is `Vulnetix/terraform-provider-resolve`. Before the first release the owner must add the signing key to the `vulnetix` namespace on registry.terraform.io and submit `vulnetix/resolve` to the OpenTofu registry.
+The registry address is `vulnetix/resolve` (namespace `vulnetix`, type `resolve`), while resources keep the `vulnetix_` prefix from the local name `vulnetix` in `required_providers`. Both the Terraform Registry and the OpenTofu registry require the GitHub repository to be named `terraform-provider-{type}`, which is why this repository is `Vulnesis/terraform-provider-resolve`. Before the first release the owner must add the signing key to the `vulnetix` namespace on registry.terraform.io and submit `vulnetix/resolve` to the OpenTofu registry.
 
 `.goreleaser.yml` already produces `terraform-provider-resolve_<version>_<os>_<arch>.zip`, `_manifest.json`, `_SHA256SUMS` and the detached `_SHA256SUMS.sig` that the registries require.
 
@@ -39,20 +39,20 @@ The registry address is `vulnetix/resolve` (namespace `vulnetix`, type `resolve`
 
 | Argument   | Environment variable    | Default                                | Notes |
 |------------|-------------------------|----------------------------------------|-------|
-| `api_key`  | `VULNETIX_API_KEY`      | none                                   | The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. Needs `org_id`. Sensitive. |
-| `org_id`   | `VULNETIX_ORG_ID`       | none                                   | The organisation UUID the ApiKey belongs to. |
-| `token`    | `VULNETIX_API_TOKEN`    | none                                   | A bearer token, sent as `Authorization: Bearer`: an Authentik OAuth2 access token or a session JWT. Sensitive. |
-| `endpoint` | `VULNETIX_ENDPOINT`     | `https://www.vulnetix.com/api/site/v1` | The console API. Config routes are under `/config/...`. |
+| `api_key`  | `VULNESIS_API_KEY`      | none                                   | The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. Needs `org_id`. Sensitive. |
+| `org_id`   | `VULNESIS_ORG_ID`       | none                                   | The organisation UUID the ApiKey belongs to. |
+| `token`    | `VULNESIS_API_TOKEN`    | none                                   | A bearer token, sent as `Authorization: Bearer`: an Authentik OAuth2 access token or a session JWT. Sensitive. |
+| `endpoint` | `VULNESIS_ENDPOINT`     | `https://www.vulnes.is/api/site/v1` | The console API. Config routes are under `/config/...`. |
 | `manager`  | none                    | `terraform`                            | Recorded as the owner of each object, so `vulnetix config apply --prune` leaves Terraform's objects alone. |
 
-These are the credentials the Vulnetix CLI and API already accept. Configure either `api_key` with `org_id`, or `token`; both together is an error, and neither is a warning (every request is refused).
+These are the credentials the Vulnesis CLI and API already accept. Configure either `api_key` with `org_id`, or `token`; both together is an error, and neither is a warning (every request is refused).
 
 The principal must be an owner or admin of the organisation. The recommended automation credential is the ApiKey of a service account created with the admin or owner role. A member, including a service account that was not given a role, gets HTTP 403 on apply. A person's ApiKey or `vulnetix auth login` session works too when that person is an owner or admin.
 
 ```hcl
 provider "vulnetix" {
   org_id  = var.vulnetix_org_id
-  api_key = var.vulnetix_api_key # sensitive; or set VULNETIX_API_KEY
+  api_key = var.vulnetix_api_key # sensitive; or set VULNESIS_API_KEY
 }
 ```
 
@@ -60,7 +60,7 @@ The bearer alternative, for an Authentik access token:
 
 ```hcl
 provider "vulnetix" {
-  token = var.vulnetix_token # sensitive; or set VULNETIX_API_TOKEN
+  token = var.vulnetix_token # sensitive; or set VULNESIS_API_TOKEN
 }
 ```
 
@@ -158,7 +158,7 @@ Organization, Member, ServiceAccount and VaultEntry decide who can act for the t
 | `vulnetix_kinds` | `GET /config/kinds`: the kinds the server applies, with their schemas. |
 | `vulnetix_ai_models` | `GET /ai-firewall/models`: the AI firewall model catalogue, filtered by provider or search. |
 | `vulnetix_vex_statements` | `GET /vex/statements`: every VEX statement the tenant holds, in every status, with its products and purls, filtered by status, vulnerability, purl or repository. A token needs the `VexSource` or `Suppression` kind. |
-| `vulnetix_github_installation_repos` | `GET /integrations/github/installations/repos`: the repositories the tenant's GitHub App installations reach, from Vulnetix's cache. A token needs the `github-installations` scope. |
+| `vulnetix_github_installation_repos` | `GET /integrations/github/installations/repos`: the repositories the tenant's GitHub App installations reach, from Vulnesis's cache. A token needs the `github-installations` scope. |
 | `vulnetix_detection_rule_feed` | `GET /detection-rule-feeds`, `GET /detection-rule-feeds/{uuid}`: one feed and its entries (Pro plan). |
 | `vulnetix_virtual_patches` | The same feed routes: the entries whose `rule_table` is `virtual_patch`. |
 
@@ -216,7 +216,7 @@ go get github.com/vulnetix/config-schemas@vX.Y.Z
 go generate ./...   # cmd/genresources, then tfplugindocs
 ```
 
-`cmd/genresources` writes `internal/provider/zz_generated_<kind>.go` for each kind (a `kindSpec`: the framework schema attributes plus the field map between attributes and spec keys) and `examples/resources/vulnetix_<kind>/{minimal,advanced,reference}.tf`, `reference.yaml` and `import.sh`. `reference` is the minimal example plus every argument that has a schema default, set to it; its YAML is checked against config-schemas and published in [Vulnetix/platform-iac-examples](https://github.com/Vulnetix/platform-iac-examples). One generic resource (`internal/provider/resource_kind.go`) serves every kind. It reads each schema's `x-vulnetix` block for `validateOnly`, `singleton`, `dependsOn`, `secrets` and `celFields`. Three lists stay by hand, each checked by a test:
+`cmd/genresources` writes `internal/provider/zz_generated_<kind>.go` for each kind (a `kindSpec`: the framework schema attributes plus the field map between attributes and spec keys) and `examples/resources/vulnetix_<kind>/{minimal,advanced,reference}.tf`, `reference.yaml` and `import.sh`. `reference` is the minimal example plus every argument that has a schema default, set to it; its YAML is checked against config-schemas and published in [Vulnesis/platform-iac-examples](https://github.com/Vulnesis/platform-iac-examples). One generic resource (`internal/provider/resource_kind.go`) serves every kind. It reads each schema's `x-vulnetix` block for `validateOnly`, `singleton`, `dependsOn`, `secrets` and `celFields`. Three lists stay by hand, each checked by a test:
 
 - [`cmd/genresources/served.go`](cmd/genresources/served.go): the kinds the engine serves (vdb-site `handler/config_engine_kinds.go`). Add a kind there when its adapter ships.
 - [`cmd/genresources/collections.go`](cmd/genresources/collections.go): whether each array of a served kind is a list or a set, decided from how its engine adapter stores it.
@@ -235,11 +235,11 @@ The unit tests run a real `terraform` binary (1.11 or later, from `PATH`) agains
 Acceptance tests (`TestAcc<Kind>`, one per served kind) run the same lifecycle against a real server and change its configuration, singletons included. Point them at a test tenant only:
 
 ```sh
-TF_ACC=1 VULNETIX_ENDPOINT=https://www.vulnetix.com/api/site/v1 \
-VULNETIX_API_KEY=... VULNETIX_ORG_ID=... go test ./internal/provider -run TestAcc
+TF_ACC=1 VULNESIS_ENDPOINT=https://www.vulnes.is/api/site/v1 \
+VULNESIS_API_KEY=... VULNESIS_ORG_ID=... go test ./internal/provider -run TestAcc
 ```
 
-Use the ApiKey of an admin or owner service account. Under OpenTofu, add `TF_ACC_TERRAFORM_PATH=$(command -v tofu) TF_ACC_PROVIDER_NAMESPACE=vulnetix`. They skip unless `TF_ACC`, `VULNETIX_ENDPOINT` and either `VULNETIX_API_KEY` with `VULNETIX_ORG_ID`, or `VULNETIX_API_TOKEN`, are set. In CI they run when the repository has the `VULNETIX_ENDPOINT`, `VULNETIX_API_KEY` and `VULNETIX_ORG_ID` secrets.
+Use the ApiKey of an admin or owner service account. Under OpenTofu, add `TF_ACC_TERRAFORM_PATH=$(command -v tofu) TF_ACC_PROVIDER_NAMESPACE=vulnetix`. They skip unless `TF_ACC`, `VULNESIS_ENDPOINT` and either `VULNESIS_API_KEY` with `VULNESIS_ORG_ID`, or `VULNESIS_API_TOKEN`, are set. In CI they run when the repository has the `VULNESIS_ENDPOINT`, `VULNESIS_API_KEY` and `VULNESIS_ORG_ID` secrets.
 
 ## Releasing
 
@@ -252,7 +252,7 @@ Repository secrets the workflow needs:
 | `GPG_PRIVATE_KEY` | ASCII-armoured GPG private key (`gpg --armor --export-secret-keys <id>`). RSA or DSA; the Terraform registry does not accept ECC keys. |
 | `PASSPHRASE` | That key's passphrase. |
 
-The `justfile` does this without prompts. The private key, passphrase and fingerprint live in Bitwarden (`signing/TF_PROVIDER_GPG_*`, read with `vx-secrets` from `Vulnetix/ops`); recipes handle keys in a temporary `GNUPGHOME`, so no keyring or local file holds them:
+The `justfile` does this without prompts. The private key, passphrase and fingerprint live in Bitwarden (`signing/TF_PROVIDER_GPG_*`, read with `vx-secrets` from `Vulnesis/ops`); recipes handle keys in a temporary `GNUPGHOME`, so no keyring or local file holds them:
 
 | Recipe | What it does |
 |--------|--------------|

@@ -3,17 +3,17 @@
 page_title: "vulnetix_github_installation_repos Data Source - vulnetix"
 subcategory: ""
 description: |-
-  The repositories the tenant's active GitHub App installations reach (GET /integrations/github/installations/repos), ordered by full name. It reads Vulnetix's cache, which GitHub webhooks keep current, so a plan never calls GitHub. Use full_names to scope a vulnetix_vex_source or a vulnetix_jail_policy to every repository the App can see.
+  The repositories the tenant's active GitHub App installations reach (GET /integrations/github/installations/repos), ordered by full name. It reads Vulnesis's cache, which GitHub webhooks keep current, so a plan never calls GitHub. Use full_names to scope a vulnetix_vex_source or a vulnetix_jail_policy to every repository the App can see.
 ---
 
 # vulnetix_github_installation_repos (Data Source)
 
-The repositories the tenant's active GitHub App installations reach (`GET /integrations/github/installations/repos`), ordered by full name. It reads Vulnetix's cache, which GitHub webhooks keep current, so a plan never calls GitHub. Use `full_names` to scope a `vulnetix_vex_source` or a `vulnetix_jail_policy` to every repository the App can see.
+The repositories the tenant's active GitHub App installations reach (`GET /integrations/github/installations/repos`), ordered by full name. It reads Vulnesis's cache, which GitHub webhooks keep current, so a plan never calls GitHub. Use `full_names` to scope a `vulnetix_vex_source` or a `vulnetix_jail_policy` to every repository the App can see.
 
 ## Example Usage
 
 ```terraform
-# Every repository the Vulnetix GitHub App can see in the acme organisation,
+# Every repository the Vulnesis GitHub App can see in the acme organisation,
 # archived ones left out.
 data "vulnetix_github_installation_repos" "acme" {
   query = "acme/"
@@ -61,4 +61,4 @@ Read-Only:
 - `owner_login` (String) The repository's owner.
 - `private` (Boolean) Whether the repository is private.
 - `repo_id` (Number) GitHub's repository id.
-- `updated_at` (Number) When Vulnetix last refreshed the row, in Unix milliseconds.
+- `updated_at` (Number) When Vulnesis last refreshed the row, in Unix milliseconds.
