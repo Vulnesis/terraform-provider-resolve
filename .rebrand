@@ -1,0 +1,3 @@
+# scripts/rebrand.py config (Vulnesis/ops).
+# zz_generated_*.go derive from rebranded sources; main_test checks they are current.
+post go generate ./...
