@@ -1,3 +1,5 @@
 # scripts/rebrand.py config (Vulnesis/ops).
-# zz_generated_*.go derive from rebranded sources; main_test checks they are current.
-post go generate ./...
+# Shared by both brands: only documents are rebranded; code keeps Vulnetix
+# defaults and the brand argument selects vulnes.is.
+docs-only
+keep VULNETIX_
