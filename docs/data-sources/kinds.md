@@ -3,12 +3,12 @@
 page_title: "vulnetix_kinds Data Source - vulnetix"
 subcategory: ""
 description: |-
-  The config kinds the Vulnesis server applies, with their JSON Schemas (GET /config/kinds). Use it to check that a kind is served before applying it.
+  The config kinds the Vulnetix server applies, with their JSON Schemas (GET /config/kinds). Use it to check that a kind is served before applying it.
 ---
 
 # vulnetix_kinds (Data Source)
 
-The config kinds the Vulnesis server applies, with their JSON Schemas (`GET /config/kinds`). Use it to check that a kind is served before applying it.
+The config kinds the Vulnetix server applies, with their JSON Schemas (`GET /config/kinds`). Use it to check that a kind is served before applying it.
 
 ## Example Usage
 

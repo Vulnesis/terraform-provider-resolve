@@ -1,9 +1,9 @@
-# Vulnesis Terraform provider
+# Vulnetix Terraform provider
 #
 # Releases are signed with a GPG key whose public half is registered on
 # registry.terraform.io and the OpenTofu registry. The private key, its
 # passphrase and fingerprint live in Bitwarden (`signing/TF_PROVIDER_GPG_*`,
-# read with vx-secrets from Vulnesis/ops). No recipe needs a local keyring or a
+# read with vx-secrets from Vulnetix/ops). No recipe needs a local keyring or a
 # local file: keys are handled in a temporary GNUPGHOME that is removed on exit.
 #
 #   just gpg-key      create the signing key (once) and store it in Bitwarden
@@ -11,8 +11,8 @@
 #   just public-key   print the armoured public key to paste into the registries
 #   just release 1.0.0  tag v1.0.0 and push it, which runs the Release workflow
 
-repo := "Vulnesis/terraform-provider-resolve"
-key_uid := "Vulnesis Terraform Provider <chris@vulnes.is>"
+repo := "Vulnetix/terraform-provider-resolve"
+key_uid := "Vulnetix Terraform Provider <chris@vulnetix.com>"
 ns := "signing"
 
 default:

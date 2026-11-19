@@ -1,4 +1,4 @@
-// Package client talks to the Vulnesis config API (vdb-site /v1).
+// Package client talks to the Vulnetix config API (vdb-site /v1).
 //
 // Every request and response shape the provider depends on is in this one
 // file, so if the server's contract moves, this is the only file that should
@@ -33,7 +33,7 @@ import (
 
 // DefaultEndpoint is the console API every signed-in surface calls. The
 // config routes are mounted flat under its /v1.
-const DefaultEndpoint = "https://www.vulnes.is/api/site/v1"
+const DefaultEndpoint = "https://www.vulnetix.com/api/site/v1"
 
 // DefaultManager is how objects this provider applies are recorded in the
 // server's ownership table, so a GitOps apply with --prune never deletes them.
@@ -210,7 +210,7 @@ func (e *APIError) Unwrap() error {
 
 // authorization is the Authorization header for the configured credential:
 // "Bearer <token>" for an Authentik access token or a session JWT, or
-// "ApiKey <org>:<key>" for an organisation ApiKey, the format the Vulnesis CLI
+// "ApiKey <org>:<key>" for an organisation ApiKey, the format the Vulnetix CLI
 // sends. A key that already starts with "<org>:" is not prefixed twice.
 func (c *Client) authorization() string {
 	switch {
@@ -489,7 +489,7 @@ type FeedEntry struct {
 	AddedAt    int64  `json:"addedAt"`
 }
 
-// RuleTableVirtualPatch is the ruleTable of an entry that is a Vulnesis
+// RuleTableVirtualPatch is the ruleTable of an entry that is a Vulnetix
 // generated virtual patch (handler/defence_formats.go TableVirtualPatch).
 const RuleTableVirtualPatch = "virtual_patch"
 

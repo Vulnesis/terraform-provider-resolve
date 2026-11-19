@@ -16,7 +16,7 @@ import (
 // changes none it chose: since 1.3.3 an import reads a value equal to its
 // default as unset, so declaring the default is the only diff it can cause.
 //
-// The Vulnesis/platform-iac-examples repository publishes these files.
+// The Vulnetix/platform-iac-examples repository publishes these files.
 
 // specDefaults returns the default of every property of an object node that
 // has one, recursing into objects. An object is only included when its

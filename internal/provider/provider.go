@@ -5,22 +5,28 @@ import (
 	"context"
 	"os"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	"github.com/vulnetix/terraform-provider-resolve/internal/brand"
 	"github.com/vulnetix/terraform-provider-resolve/internal/client"
 )
 
 // Environment variables the provider reads when an argument is not set.
 const (
-	EnvAPIKey   = "VULNESIS_API_KEY"
-	EnvOrgID    = "VULNESIS_ORG_ID"
-	EnvToken    = "VULNESIS_API_TOKEN"
-	EnvEndpoint = "VULNESIS_ENDPOINT"
+	EnvAPIKey   = "VULNETIX_API_KEY"
+	EnvOrgID    = "VULNETIX_ORG_ID"
+	EnvToken    = "VULNETIX_API_TOKEN"
+	EnvEndpoint = "VULNETIX_ENDPOINT"
+	// EnvBrand selects the brand; EnvBrandAlias is read when it is unset.
+	EnvBrand      = brand.EnvVar
+	EnvBrandAlias = brand.AliasEnvVar
 )
 
 // roleNote is appended to every credential argument: what the principal must
@@ -51,6 +57,7 @@ type providerModel struct {
 	OrgID    types.String `tfsdk:"org_id"`
 	Token    types.String `tfsdk:"token"`
 	Manager  types.String `tfsdk:"manager"`
+	Brand    types.String `tfsdk:"brand"`
 }
 
 func (p *vulnetixProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -60,14 +67,23 @@ func (p *vulnetixProvider) Metadata(_ context.Context, _ provider.MetadataReques
 
 func (p *vulnetixProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Manage Vulnesis configuration as code. Every resource is one " +
+		MarkdownDescription: "Manage Vulnetix configuration as code. Every resource is one " +
 			"`vulnetix.com/v1` config document, generated from the kind schemas in " +
-			"[config-schemas](https://github.com/Vulnesis/config-schemas), and applied through the same " +
+			"[config-schemas](https://github.com/Vulnetix/config-schemas), and applied through the same " +
 			"server-side engine as `vulnetix config apply`.",
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "The Vulnesis API base URL. Defaults to `$" + EnvEndpoint + "`, then `" + client.DefaultEndpoint + "`.",
-				Optional:            true,
+				MarkdownDescription: "The Vulnetix API base URL. Defaults to `$" + EnvEndpoint + "`, then `" + client.DefaultEndpoint + "` " +
+					"(`" + brand.Vulnesis.URL(client.DefaultEndpoint) + "` when `brand` is `vulnesis`).",
+				Optional: true,
+			},
+			"brand": schema.StringAttribute{
+				MarkdownDescription: "The brand the provider speaks for: `vulnetix` (vulnetix.com, the default) or `vulnesis` (vulnes.is). " +
+					"It only changes the default `endpoint`: under `vulnesis` a vulnetix.com host maps onto vulnes.is " +
+					"(`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`); an explicit `endpoint` or `$" + EnvEndpoint + "` always wins. " +
+					"Defaults to `$" + EnvBrand + "` (or its alias `$" + EnvBrandAlias + "`), then `vulnetix`; an unrecognised environment value is `vulnetix`.",
+				Optional:   true,
+				Validators: []validator.String{stringvalidator.OneOfCaseInsensitive("vulnetix", "vulnesis")},
 			},
 			"api_key": schema.StringAttribute{
 				MarkdownDescription: "The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. " +
@@ -82,7 +98,7 @@ func (p *vulnetixProvider) Schema(_ context.Context, _ provider.SchemaRequest, r
 			},
 			"token": schema.StringAttribute{
 				MarkdownDescription: "A bearer token, sent as `Authorization: Bearer <token>`: an Authentik OAuth2 " +
-					"access token (for example from a client-credentials grant) or a Vulnesis session JWT. " +
+					"access token (for example from a client-credentials grant) or a Vulnetix session JWT. " +
 					"Defaults to `$" + EnvToken + "`. Set either `token`, or `api_key` and `org_id`, not both. " + roleNote,
 				Optional:  true,
 				Sensitive: true,
@@ -102,7 +118,7 @@ func (p *vulnetixProvider) Configure(ctx context.Context, req provider.Configure
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	endpoint := firstSet(m.Endpoint, os.Getenv(EnvEndpoint))
+	endpoint := defaultEndpoint(firstSet(m.Endpoint, os.Getenv(EnvEndpoint)), resolveBrand(m.Brand))
 	manager := firstSet(m.Manager, "")
 	apiKey := firstSet(m.APIKey, os.Getenv(EnvAPIKey))
 	orgID := firstSet(m.OrgID, os.Getenv(EnvOrgID))
@@ -129,7 +145,7 @@ func checkCredentials(apiKey, orgID, token string) diag.Diagnostics {
 	var d diag.Diagnostics
 	switch {
 	case apiKey != "" && token != "":
-		d.AddError("Two Vulnesis credentials",
+		d.AddError("Two Vulnetix credentials",
 			"Both an ApiKey (api_key / "+EnvAPIKey+") and a bearer token (token / "+EnvToken+") are set. "+
 				"Configure one: api_key with org_id, or token.")
 	case apiKey != "" && orgID == "":
@@ -139,12 +155,32 @@ func checkCredentials(apiKey, orgID, token string) diag.Diagnostics {
 		d.AddError("org_id needs api_key",
 			"org_id is set without an api_key. Set api_key or "+EnvAPIKey+", or use token or "+EnvToken+" instead.")
 	case apiKey == "" && token == "":
-		d.AddWarning("No Vulnesis credentials",
+		d.AddWarning("No Vulnetix credentials",
 			"Set api_key and org_id ("+EnvAPIKey+" and "+EnvOrgID+"), or token ("+EnvToken+"). "+
 				"Every request will be refused without one. The principal must be an owner or admin; "+
 				"an admin or owner service account's ApiKey is the recommended automation credential.")
 	}
 	return d
+}
+
+// resolveBrand is the brand argument when it is set, else the brand the
+// environment selects (Vulnetix unless VULNETIX_BRAND or VULNESIS_BRAND says
+// vulnesis). The schema validator has already refused any other argument.
+func resolveBrand(v types.String) brand.Brand {
+	if b, ok := brand.Parse(firstSet(v, "")); ok {
+		return b
+	}
+	return brand.FromEnv()
+}
+
+// defaultEndpoint is the configured endpoint when there is one, else the
+// brand's console API. Under Vulnetix that is client.DefaultEndpoint, as it
+// has always been.
+func defaultEndpoint(configured string, b brand.Brand) string {
+	if configured != "" {
+		return configured
+	}
+	return b.URL(client.DefaultEndpoint)
 }
 
 // firstSet is the argument when it is set, else fallback. An unknown value

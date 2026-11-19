@@ -248,7 +248,7 @@ func (d *virtualPatchesDataSource) Metadata(_ context.Context, req datasource.Me
 
 func (d *virtualPatchesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "The Vulnesis generated virtual patches in one detection rule feed: its entries whose " +
+		MarkdownDescription: "The Vulnetix generated virtual patches in one detection rule feed: its entries whose " +
 			"`rule_table` is `virtual_patch`. Third-party catalogue rules and countermeasures in the same feed are left out. " +
 			"Feeds need a Pro plan or higher.",
 		Attributes: map[string]schema.Attribute{

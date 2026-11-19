@@ -346,7 +346,7 @@ resource "vulnetix_quality_gate" "gate" {
 }
 
 // Both credential forms apply, and the provider sends the header the
-// Vulnesis CLI sends: ApiKey <org>:<key>, or Bearer <token>.
+// Vulnetix CLI sends: ApiKey <org>:<key>, or Bearer <token>.
 func TestCredentialForms(t *testing.T) {
 	for name, tc := range map[string]struct {
 		block func(url string) string
@@ -422,7 +422,7 @@ func TestCredentialConflicts(t *testing.T) {
 	for name, tc := range map[string]struct{ creds, want string }{
 		"both": {`api_key = "k"
   org_id  = "o"
-  token   = "t"`, `Two Vulnesis credentials`},
+  token   = "t"`, `Two Vulnetix credentials`},
 		"key without org": {`api_key = "k"`, `api_key needs org_id`},
 		"org without key": {`org_id = "o"`, `org_id needs api_key`},
 	} {

@@ -18,11 +18,11 @@ import (
 // its kind's examples (examples/resources/vulnetix_<kind>), including
 // singletons such as the QualityGate. Point them at a test tenant only.
 //
-//	TF_ACC=1 VULNESIS_ENDPOINT=https://www.vulnes.is/api/site/v1 \
-//	VULNESIS_API_KEY=... VULNESIS_ORG_ID=... go test ./internal/provider -run TestAcc
+//	TF_ACC=1 VULNETIX_ENDPOINT=https://www.vulnetix.com/api/site/v1 \
+//	VULNETIX_API_KEY=... VULNETIX_ORG_ID=... go test ./internal/provider -run TestAcc
 //
 // or, with a bearer token (an Authentik access token) instead of the ApiKey,
-// VULNESIS_API_TOKEN=... The principal needs the owner or admin role: use the
+// VULNETIX_API_TOKEN=... The principal needs the owner or admin role: use the
 // ApiKey of an admin or owner service account. Run the same suite under
 // OpenTofu with TF_ACC_TERRAFORM_PATH=$(which tofu) and
 // TF_ACC_PROVIDER_NAMESPACE=vulnetix.
@@ -31,7 +31,7 @@ import (
 // the server settings, so TF_ACC alone never aims them at production.
 
 // accMissing is what keeps an acceptance run from starting: the endpoint, and
-// either VULNESIS_API_KEY with VULNESIS_ORG_ID or VULNESIS_API_TOKEN.
+// either VULNETIX_API_KEY with VULNETIX_ORG_ID or VULNETIX_API_TOKEN.
 func accMissing(getenv func(string) string) string {
 	if getenv(EnvEndpoint) == "" {
 		return EnvEndpoint
@@ -91,10 +91,10 @@ func testAccKind(t *testing.T, kind string) {
 	t.Helper()
 	// A kind that needs something outside the tenant (a GitHub App installation
 	// to adopt, a Wiz account, a real mailbox for an invitation) can be left
-	// out of a run: VULNESIS_ACC_SKIP_KINDS=GitHubInstallation,WizConnection.
-	for _, s := range strings.Split(os.Getenv("VULNESIS_ACC_SKIP_KINDS"), ",") {
+	// out of a run: VULNETIX_ACC_SKIP_KINDS=GitHubInstallation,WizConnection.
+	for _, s := range strings.Split(os.Getenv("VULNETIX_ACC_SKIP_KINDS"), ",") {
 		if strings.TrimSpace(s) == kind {
-			t.Skipf("%s is in VULNESIS_ACC_SKIP_KINDS", kind)
+			t.Skipf("%s is in VULNETIX_ACC_SKIP_KINDS", kind)
 		}
 	}
 	var spec *kindSpec

@@ -1,4 +1,4 @@
-# Every repository the Vulnesis GitHub App can see in the acme organisation,
+# Every repository the Vulnetix GitHub App can see in the acme organisation,
 # archived ones left out.
 data "vulnetix_github_installation_repos" "acme" {
   query = "acme/"

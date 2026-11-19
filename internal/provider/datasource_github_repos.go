@@ -14,7 +14,7 @@ import (
 
 // vulnetix_github_installation_repos reads the repositories the tenant's
 // GitHub App installations reach (GET /integrations/github/installations/repos),
-// from Vulnesis's cache of them, so a plan never calls GitHub.
+// from Vulnetix's cache of them, so a plan never calls GitHub.
 
 type githubReposDataSource struct{ client *client.Client }
 
@@ -48,7 +48,7 @@ func (d *githubReposDataSource) Metadata(_ context.Context, req datasource.Metad
 func (d *githubReposDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "The repositories the tenant's active GitHub App installations reach " +
-			"(`GET /integrations/github/installations/repos`), ordered by full name. It reads Vulnesis's cache, which " +
+			"(`GET /integrations/github/installations/repos`), ordered by full name. It reads Vulnetix's cache, which " +
 			"GitHub webhooks keep current, so a plan never calls GitHub. Use `full_names` to scope a " +
 			"`vulnetix_vex_source` or a `vulnetix_jail_policy` to every repository the App can see.",
 		Attributes: map[string]schema.Attribute{
@@ -76,7 +76,7 @@ func (d *githubReposDataSource) Schema(_ context.Context, _ datasource.SchemaReq
 					"private":         schema.BoolAttribute{Computed: true, MarkdownDescription: "Whether the repository is private."},
 					"archived":        schema.BoolAttribute{Computed: true, MarkdownDescription: "Whether the repository is archived."},
 					"host":            schema.StringAttribute{Computed: true, MarkdownDescription: "The GitHub host, such as `github.com`."},
-					"updated_at":      schema.Int64Attribute{Computed: true, MarkdownDescription: "When Vulnesis last refreshed the row, in Unix milliseconds."},
+					"updated_at":      schema.Int64Attribute{Computed: true, MarkdownDescription: "When Vulnetix last refreshed the row, in Unix milliseconds."},
 				}},
 			},
 		},

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Vulnesis/config-schemas/releases/download/v0.0.0-dev/Widget.schema.json",
+  "$id": "https://github.com/Vulnetix/config-schemas/releases/download/v0.0.0-dev/Widget.schema.json",
   "title": "Widget",
   "description": "A test kind with every shape the generator supports. Not a real kind.",
   "type": "object",

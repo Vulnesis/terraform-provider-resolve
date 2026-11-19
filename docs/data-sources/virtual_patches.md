@@ -3,12 +3,12 @@
 page_title: "vulnetix_virtual_patches Data Source - vulnetix"
 subcategory: ""
 description: |-
-  The Vulnesis generated virtual patches in one detection rule feed: its entries whose rule_table is virtual_patch. Third-party catalogue rules and countermeasures in the same feed are left out. Feeds need a Pro plan or higher.
+  The Vulnetix generated virtual patches in one detection rule feed: its entries whose rule_table is virtual_patch. Third-party catalogue rules and countermeasures in the same feed are left out. Feeds need a Pro plan or higher.
 ---
 
 # vulnetix_virtual_patches (Data Source)
 
-The Vulnesis generated virtual patches in one detection rule feed: its entries whose `rule_table` is `virtual_patch`. Third-party catalogue rules and countermeasures in the same feed are left out. Feeds need a Pro plan or higher.
+The Vulnetix generated virtual patches in one detection rule feed: its entries whose `rule_table` is `virtual_patch`. Third-party catalogue rules and countermeasures in the same feed are left out. Feeds need a Pro plan or higher.
 
 ## Example Usage
 

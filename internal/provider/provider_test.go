@@ -8,7 +8,11 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	"github.com/vulnetix/terraform-provider-resolve/internal/client"
 )
 
 // The provider offers exactly the kinds the engine applies: an unserved
@@ -83,6 +87,51 @@ func TestCheckCredentials(t *testing.T) {
 				t.Errorf("%d errors and %d warnings, want %d and %d: %v", d.ErrorsCount(), d.WarningsCount(), tc.errors, tc.warnings, d)
 			}
 		})
+	}
+}
+
+// The brand only moves the default endpoint: Vulnetix keeps
+// client.DefaultEndpoint, Vulnesis maps it onto vulnes.is, and an explicit
+// endpoint (argument or VULNETIX_ENDPOINT) always wins.
+func TestBrandEndpoint(t *testing.T) {
+	for name, tc := range map[string]struct {
+		arg             types.String
+		envBrand, alias string
+		configured      string
+		want            string
+	}{
+		"default":                       {arg: types.StringNull(), want: client.DefaultEndpoint},
+		"argument vulnetix":             {arg: types.StringValue("vulnetix"), want: client.DefaultEndpoint},
+		"argument vulnesis":             {arg: types.StringValue("vulnesis"), want: "https://www.vulnes.is/api/site/v1"},
+		"argument any case":             {arg: types.StringValue("Vulnesis"), want: "https://www.vulnes.is/api/site/v1"},
+		"env vulnesis":                  {arg: types.StringNull(), envBrand: "vulnesis", want: "https://www.vulnes.is/api/site/v1"},
+		"env alias":                     {arg: types.StringNull(), alias: "vulnesis", want: "https://www.vulnes.is/api/site/v1"},
+		"env garbage":                   {arg: types.StringNull(), envBrand: "acme", want: client.DefaultEndpoint},
+		"argument wins over env":        {arg: types.StringValue("vulnetix"), envBrand: "vulnesis", want: client.DefaultEndpoint},
+		"unknown argument falls to env": {arg: types.StringUnknown(), envBrand: "vulnesis", want: "https://www.vulnes.is/api/site/v1"},
+		"explicit endpoint wins":        {arg: types.StringValue("vulnesis"), configured: "https://staging.example/v1", want: "https://staging.example/v1"},
+		"explicit vulnetix endpoint":    {arg: types.StringValue("vulnesis"), configured: client.DefaultEndpoint, want: client.DefaultEndpoint},
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Setenv(EnvBrand, tc.envBrand)
+			t.Setenv(EnvBrandAlias, tc.alias)
+			if got := defaultEndpoint(tc.configured, resolveBrand(tc.arg)); got != tc.want {
+				t.Errorf("endpoint %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
+// The brand argument is optional and validated.
+func TestBrandArgument(t *testing.T) {
+	var resp provider.SchemaResponse
+	(&vulnetixProvider{}).Schema(context.Background(), provider.SchemaRequest{}, &resp)
+	a, ok := resp.Schema.Attributes["brand"].(schema.StringAttribute)
+	if !ok {
+		t.Fatal("no brand string argument")
+	}
+	if !a.Optional || a.Required || len(a.Validators) == 0 {
+		t.Errorf("brand must be optional and validated: %+v", a)
 	}
 }
 

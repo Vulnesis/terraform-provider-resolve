@@ -19,7 +19,7 @@ terraform {
   }
 }
 
-provider "vulnetix" {} # ApiKey from VULNESIS_API_KEY and VULNESIS_ORG_ID
+provider "vulnetix" {} # ApiKey from VULNETIX_API_KEY and VULNETIX_ORG_ID
 
 resource "vulnetix_quality_gate" "default" {
   severity      = "high"
@@ -39,11 +39,12 @@ The registry address is `vulnetix/resolve` (namespace `vulnetix`, type `resolve`
 
 | Argument   | Environment variable    | Default                                | Notes |
 |------------|-------------------------|----------------------------------------|-------|
-| `api_key`  | `VULNESIS_API_KEY`      | none                                   | The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. Needs `org_id`. Sensitive. |
-| `org_id`   | `VULNESIS_ORG_ID`       | none                                   | The organisation UUID the ApiKey belongs to. |
-| `token`    | `VULNESIS_API_TOKEN`    | none                                   | A bearer token, sent as `Authorization: Bearer`: an Authentik OAuth2 access token or a session JWT. Sensitive. |
-| `endpoint` | `VULNESIS_ENDPOINT`     | `https://www.vulnes.is/api/site/v1` | The console API. Config routes are under `/config/...`. |
+| `api_key`  | `VULNETIX_API_KEY`      | none                                   | The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. Needs `org_id`. Sensitive. |
+| `org_id`   | `VULNETIX_ORG_ID`       | none                                   | The organisation UUID the ApiKey belongs to. |
+| `token`    | `VULNETIX_API_TOKEN`    | none                                   | A bearer token, sent as `Authorization: Bearer`: an Authentik OAuth2 access token or a session JWT. Sensitive. |
+| `endpoint` | `VULNETIX_ENDPOINT`     | `https://www.vulnes.is/api/site/v1` | The console API. Config routes are under `/config/...`. Under `brand = "vulnesis"` the default is `https://www.vulnes.is/api/site/v1`. |
 | `manager`  | none                    | `terraform`                            | Recorded as the owner of each object, so `vulnetix config apply --prune` leaves Terraform's objects alone. |
+| `brand`    | `VULNETIX_BRAND` (alias `VULNESIS_BRAND`) | `vulnetix`           | `vulnetix` (vulnes.is) or `vulnesis` (vulnes.is). Only moves the default `endpoint` onto vulnes.is (`www.vulnes.is` is `www.vulnes.is`, `api-vdb.vulnes.is` is `api-vdb.vulnes.is`); an explicit `endpoint` or `VULNETIX_ENDPOINT` always wins. An unrecognised environment value is `vulnetix`. |
 
 These are the credentials the Vulnesis CLI and API already accept. Configure either `api_key` with `org_id`, or `token`; both together is an error, and neither is a warning (every request is refused).
 
@@ -52,7 +53,7 @@ The principal must be an owner or admin of the organisation. The recommended aut
 ```hcl
 provider "vulnetix" {
   org_id  = var.vulnetix_org_id
-  api_key = var.vulnetix_api_key # sensitive; or set VULNESIS_API_KEY
+  api_key = var.vulnetix_api_key # sensitive; or set VULNETIX_API_KEY
 }
 ```
 
@@ -60,7 +61,7 @@ The bearer alternative, for an Authentik access token:
 
 ```hcl
 provider "vulnetix" {
-  token = var.vulnetix_token # sensitive; or set VULNESIS_API_TOKEN
+  token = var.vulnetix_token # sensitive; or set VULNETIX_API_TOKEN
 }
 ```
 
@@ -235,11 +236,11 @@ The unit tests run a real `terraform` binary (1.11 or later, from `PATH`) agains
 Acceptance tests (`TestAcc<Kind>`, one per served kind) run the same lifecycle against a real server and change its configuration, singletons included. Point them at a test tenant only:
 
 ```sh
-TF_ACC=1 VULNESIS_ENDPOINT=https://www.vulnes.is/api/site/v1 \
-VULNESIS_API_KEY=... VULNESIS_ORG_ID=... go test ./internal/provider -run TestAcc
+TF_ACC=1 VULNETIX_ENDPOINT=https://www.vulnes.is/api/site/v1 \
+VULNETIX_API_KEY=... VULNETIX_ORG_ID=... go test ./internal/provider -run TestAcc
 ```
 
-Use the ApiKey of an admin or owner service account. Under OpenTofu, add `TF_ACC_TERRAFORM_PATH=$(command -v tofu) TF_ACC_PROVIDER_NAMESPACE=vulnetix`. They skip unless `TF_ACC`, `VULNESIS_ENDPOINT` and either `VULNESIS_API_KEY` with `VULNESIS_ORG_ID`, or `VULNESIS_API_TOKEN`, are set. In CI they run when the repository has the `VULNESIS_ENDPOINT`, `VULNESIS_API_KEY` and `VULNESIS_ORG_ID` secrets.
+Use the ApiKey of an admin or owner service account. Under OpenTofu, add `TF_ACC_TERRAFORM_PATH=$(command -v tofu) TF_ACC_PROVIDER_NAMESPACE=vulnetix`. They skip unless `TF_ACC`, `VULNETIX_ENDPOINT` and either `VULNETIX_API_KEY` with `VULNETIX_ORG_ID`, or `VULNETIX_API_TOKEN`, are set. In CI they run when the repository has the `VULNETIX_ENDPOINT`, `VULNETIX_API_KEY` and `VULNETIX_ORG_ID` secrets.
 
 ## Releasing
 
