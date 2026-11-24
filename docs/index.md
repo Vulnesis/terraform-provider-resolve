@@ -61,8 +61,8 @@ variable "vulnetix_api_key" {
 # org_id out and set VULNETIX_API_KEY and VULNETIX_ORG_ID instead.
 provider "vulnetix" {
   # The console API. Defaults to $VULNETIX_ENDPOINT, then
-  # https://www.vulnetix.com/api/site/v1.
-  endpoint = "https://www.vulnetix.com/api/site/v1"
+  # https://www.vulnes.is/api/site/v1.
+  endpoint = "https://www.vulnes.is/api/site/v1"
 
   # Sent as "Authorization: ApiKey <org_id>:<api_key>". The principal must be
   # an owner or admin; a member is refused with HTTP 403 on apply.
@@ -73,9 +73,9 @@ provider "vulnetix" {
   # "vulnetix config apply --prune" leaves them alone.
   manager = "terraform"
 
-  # The brand: "vulnetix" (the default) or "vulnesis", which moves the default
-  # endpoint onto vulnes.is. Defaults to $VULNETIX_BRAND, then "vulnetix".
-  brand = "vulnetix"
+  # The brand: "vulnesis" (the default) or "vulnetix", which moves the default
+  # endpoint onto vulnetix.com. Defaults to $VULNETIX_BRAND, then "vulnesis".
+  brand = "vulnesis"
 }
 ```
 
@@ -102,7 +102,7 @@ provider "vulnetix" {
 
 ## Brand
 
-The provider speaks for Vulnetix (vulnetix.com) by default. Set `brand = "vulnesis"`, or `VULNETIX_BRAND=vulnesis` (alias `VULNESIS_BRAND`), to speak for Vulnesis (vulnes.is) instead: the default `endpoint` becomes `https://www.vulnes.is/api/site/v1`. A vulnetix.com host maps onto vulnes.is with its subdomain labels joined by hyphens (`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`). An explicit `endpoint` or `VULNETIX_ENDPOINT` always wins, and the environment variable names stay `VULNETIX_*`.
+The provider speaks for Vulnesis (vulnes.is) by default: the default `endpoint` is `https://www.vulnes.is/api/site/v1`. Set `brand = "vulnetix"`, or `VULNETIX_BRAND=vulnetix` (alias `VULNESIS_BRAND`), to speak for Vulnetix (vulnetix.com) instead: the default `endpoint` becomes `https://www.vulnetix.com/api/site/v1`. Under Vulnesis a vulnetix.com host maps onto vulnes.is with its subdomain labels joined by hyphens (`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`). An explicit `endpoint` or `VULNETIX_ENDPOINT` always wins, and the environment variable names stay `VULNETIX_*`.
 
 ## Resources
 
@@ -194,8 +194,8 @@ A name the console allowed that the name pattern does not (capitals or spaces, s
 ### Optional
 
 - `api_key` (String, Sensitive) The organisation ApiKey, sent as `Authorization: ApiKey <org_id>:<api_key>`. Use it with `org_id`. Defaults to `$VULNETIX_API_KEY`. Set either `api_key` and `org_id`, or `token`, not both. The principal must be an owner or admin of the organisation: a service account created with the admin or owner role is the recommended automation credential, and its ApiKey the recommended way to authenticate. A member is refused with HTTP 403 on apply.
-- `brand` (String) The brand the provider speaks for: `vulnetix` (vulnetix.com, the default) or `vulnesis` (vulnes.is). It only changes the default `endpoint`: under `vulnesis` a vulnetix.com host maps onto vulnes.is (`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`); an explicit `endpoint` or `$VULNETIX_ENDPOINT` always wins. Defaults to `$VULNETIX_BRAND` (or its alias `$VULNESIS_BRAND`), then `vulnetix`; an unrecognised environment value is `vulnetix`.
-- `endpoint` (String) The Vulnetix API base URL. Defaults to `$VULNETIX_ENDPOINT`, then `https://www.vulnetix.com/api/site/v1` (`https://www.vulnes.is/api/site/v1` when `brand` is `vulnesis`).
+- `brand` (String) The brand the provider speaks for: `vulnesis` (vulnes.is, the default) or `vulnetix` (vulnetix.com). It only changes the default `endpoint`: under `vulnesis` a vulnetix.com host maps onto vulnes.is (`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`); an explicit `endpoint` or `$VULNETIX_ENDPOINT` always wins. Defaults to `$VULNETIX_BRAND` (or its alias `$VULNESIS_BRAND`), then `vulnesis`; an unrecognised environment value is `vulnesis`.
+- `endpoint` (String) The Vulnetix API base URL. Defaults to `$VULNETIX_ENDPOINT`, then `https://www.vulnes.is/api/site/v1` (`https://www.vulnetix.com/api/site/v1` when `brand` is `vulnetix`).
 - `manager` (String) The manager recorded as the owner of every object this provider applies. A GitOps apply with `--prune` only deletes objects it manages itself. Defaults to `terraform`.
 - `org_id` (String) The organisation UUID the `api_key` belongs to. Defaults to `$VULNETIX_ORG_ID`. Required with `api_key`; not needed with `token`, which already names its organisation.
 - `token` (String, Sensitive) A bearer token, sent as `Authorization: Bearer <token>`: an Authentik OAuth2 access token (for example from a client-credentials grant) or a Vulnetix session JWT. Defaults to `$VULNETIX_API_TOKEN`. Set either `token`, or `api_key` and `org_id`, not both. The principal must be an owner or admin of the organisation: a service account created with the admin or owner role is the recommended automation credential, and its ApiKey the recommended way to authenticate. A member is refused with HTTP 403 on apply.

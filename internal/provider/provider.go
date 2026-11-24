@@ -73,15 +73,15 @@ func (p *vulnetixProvider) Schema(_ context.Context, _ provider.SchemaRequest, r
 			"server-side engine as `vulnetix config apply`.",
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "The Vulnetix API base URL. Defaults to `$" + EnvEndpoint + "`, then `" + client.DefaultEndpoint + "` " +
-					"(`" + brand.Vulnesis.URL(client.DefaultEndpoint) + "` when `brand` is `vulnesis`).",
+				MarkdownDescription: "The Vulnetix API base URL. Defaults to `$" + EnvEndpoint + "`, then `" + brand.Vulnesis.URL(client.DefaultEndpoint) + "` " +
+					"(`" + client.DefaultEndpoint + "` when `brand` is `vulnetix`).",
 				Optional: true,
 			},
 			"brand": schema.StringAttribute{
-				MarkdownDescription: "The brand the provider speaks for: `vulnetix` (vulnetix.com, the default) or `vulnesis` (vulnes.is). " +
+				MarkdownDescription: "The brand the provider speaks for: `vulnesis` (vulnes.is, the default) or `vulnetix` (vulnetix.com). " +
 					"It only changes the default `endpoint`: under `vulnesis` a vulnetix.com host maps onto vulnes.is " +
 					"(`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`); an explicit `endpoint` or `$" + EnvEndpoint + "` always wins. " +
-					"Defaults to `$" + EnvBrand + "` (or its alias `$" + EnvBrandAlias + "`), then `vulnetix`; an unrecognised environment value is `vulnetix`.",
+					"Defaults to `$" + EnvBrand + "` (or its alias `$" + EnvBrandAlias + "`), then `vulnesis`; an unrecognised environment value is `vulnesis`.",
 				Optional:   true,
 				Validators: []validator.String{stringvalidator.OneOfCaseInsensitive("vulnetix", "vulnesis")},
 			},
@@ -164,8 +164,8 @@ func checkCredentials(apiKey, orgID, token string) diag.Diagnostics {
 }
 
 // resolveBrand is the brand argument when it is set, else the brand the
-// environment selects (Vulnetix unless VULNETIX_BRAND or VULNESIS_BRAND says
-// vulnesis). The schema validator has already refused any other argument.
+// environment selects (Vulnesis unless VULNETIX_BRAND or VULNESIS_BRAND says
+// vulnetix). The schema validator has already refused any other argument.
 func resolveBrand(v types.String) brand.Brand {
 	if b, ok := brand.Parse(firstSet(v, "")); ok {
 		return b
@@ -174,8 +174,8 @@ func resolveBrand(v types.String) brand.Brand {
 }
 
 // defaultEndpoint is the configured endpoint when there is one, else the
-// brand's console API. Under Vulnetix that is client.DefaultEndpoint, as it
-// has always been.
+// brand's console API. Under Vulnetix that is client.DefaultEndpoint; under
+// Vulnesis, the default, it maps onto vulnes.is.
 func defaultEndpoint(configured string, b brand.Brand) string {
 	if configured != "" {
 		return configured

@@ -41,7 +41,7 @@ A bearer token instead of the ApiKey:
 
 ## Brand
 
-The provider speaks for Vulnetix (vulnetix.com) by default. Set `brand = "vulnesis"`, or `VULNETIX_BRAND=vulnesis` (alias `VULNESIS_BRAND`), to speak for Vulnesis (vulnes.is) instead: the default `endpoint` becomes `https://www.vulnes.is/api/site/v1`. A vulnetix.com host maps onto vulnes.is with its subdomain labels joined by hyphens (`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`). An explicit `endpoint` or `VULNETIX_ENDPOINT` always wins, and the environment variable names stay `VULNETIX_*`.
+The provider speaks for Vulnesis (vulnes.is) by default: the default `endpoint` is `https://www.vulnes.is/api/site/v1`. Set `brand = "vulnetix"`, or `VULNETIX_BRAND=vulnetix` (alias `VULNESIS_BRAND`), to speak for Vulnetix (vulnetix.com) instead: the default `endpoint` becomes `https://www.vulnetix.com/api/site/v1`. Under Vulnesis a vulnetix.com host maps onto vulnes.is with its subdomain labels joined by hyphens (`www.vulnetix.com` is `www.vulnes.is`, `api.vdb.vulnetix.com` is `api-vdb.vulnes.is`). An explicit `endpoint` or `VULNETIX_ENDPOINT` always wins, and the environment variable names stay `VULNETIX_*`.
 
 ## Resources
 

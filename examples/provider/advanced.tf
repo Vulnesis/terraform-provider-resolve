@@ -14,8 +14,8 @@ variable "vulnetix_api_key" {
 # org_id out and set VULNETIX_API_KEY and VULNETIX_ORG_ID instead.
 provider "vulnetix" {
   # The console API. Defaults to $VULNETIX_ENDPOINT, then
-  # https://www.vulnetix.com/api/site/v1.
-  endpoint = "https://www.vulnetix.com/api/site/v1"
+  # https://www.vulnes.is/api/site/v1.
+  endpoint = "https://www.vulnes.is/api/site/v1"
 
   # Sent as "Authorization: ApiKey <org_id>:<api_key>". The principal must be
   # an owner or admin; a member is refused with HTTP 403 on apply.
@@ -26,7 +26,7 @@ provider "vulnetix" {
   # "vulnetix config apply --prune" leaves them alone.
   manager = "terraform"
 
-  # The brand: "vulnetix" (the default) or "vulnesis", which moves the default
-  # endpoint onto vulnes.is. Defaults to $VULNETIX_BRAND, then "vulnetix".
-  brand = "vulnetix"
+  # The brand: "vulnesis" (the default) or "vulnetix", which moves the default
+  # endpoint onto vulnetix.com. Defaults to $VULNETIX_BRAND, then "vulnesis".
+  brand = "vulnesis"
 }

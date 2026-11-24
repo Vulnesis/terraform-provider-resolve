@@ -140,9 +140,9 @@ func TestParse(t *testing.T) {
 		{"vulnesis", Vulnesis, true},
 		{"Vulnesis", Vulnesis, true},
 		{"  vulnesis\n", Vulnesis, true},
-		{"", Vulnetix, false},
-		{"vulnes.is", Vulnetix, false},
-		{"acme", Vulnetix, false},
+		{"", Vulnesis, false},
+		{"vulnes.is", Vulnesis, false},
+		{"acme", Vulnesis, false},
 	}
 	for _, c := range cases {
 		got, ok := Parse(c.in)
@@ -175,11 +175,11 @@ func TestFromEnv(t *testing.T) {
 		want         Brand
 		wantURL      string
 	}{
-		{"unset is vulnetix", "", "", Vulnetix, def},
+		{"unset is vulnesis", "", "", Vulnesis, "https://www.vulnes.is/api/site/v1"},
 		{"explicit vulnetix", "vulnetix", "", Vulnetix, def},
 		{"vulnesis", "vulnesis", "", Vulnesis, "https://www.vulnes.is/api/site/v1"},
 		{"case-insensitive", "VulNeSiS", "", Vulnesis, "https://www.vulnes.is/api/site/v1"},
-		{"garbage is vulnetix", "acme-corp", "", Vulnetix, def},
+		{"garbage is vulnesis", "acme-corp", "", Vulnesis, "https://www.vulnes.is/api/site/v1"},
 		{"alias", "", "vulnesis", Vulnesis, "https://www.vulnes.is/api/site/v1"},
 		{"primary wins over alias", "vulnetix", "vulnesis", Vulnetix, def},
 		{"blank primary falls to alias", "  ", "VULNESIS", Vulnesis, "https://www.vulnes.is/api/site/v1"},

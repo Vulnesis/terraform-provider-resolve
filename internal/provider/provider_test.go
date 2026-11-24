@@ -90,8 +90,8 @@ func TestCheckCredentials(t *testing.T) {
 	}
 }
 
-// The brand only moves the default endpoint: Vulnetix keeps
-// client.DefaultEndpoint, Vulnesis maps it onto vulnes.is, and an explicit
+// The brand only moves the default endpoint: Vulnesis (the default) maps
+// client.DefaultEndpoint onto vulnes.is, Vulnetix keeps it, and an explicit
 // endpoint (argument or VULNETIX_ENDPOINT) always wins.
 func TestBrandEndpoint(t *testing.T) {
 	for name, tc := range map[string]struct {
@@ -100,13 +100,14 @@ func TestBrandEndpoint(t *testing.T) {
 		configured      string
 		want            string
 	}{
-		"default":                       {arg: types.StringNull(), want: client.DefaultEndpoint},
+		"default":                       {arg: types.StringNull(), want: "https://www.vulnes.is/api/site/v1"},
 		"argument vulnetix":             {arg: types.StringValue("vulnetix"), want: client.DefaultEndpoint},
 		"argument vulnesis":             {arg: types.StringValue("vulnesis"), want: "https://www.vulnes.is/api/site/v1"},
 		"argument any case":             {arg: types.StringValue("Vulnesis"), want: "https://www.vulnes.is/api/site/v1"},
 		"env vulnesis":                  {arg: types.StringNull(), envBrand: "vulnesis", want: "https://www.vulnes.is/api/site/v1"},
 		"env alias":                     {arg: types.StringNull(), alias: "vulnesis", want: "https://www.vulnes.is/api/site/v1"},
-		"env garbage":                   {arg: types.StringNull(), envBrand: "acme", want: client.DefaultEndpoint},
+		"env vulnetix":                  {arg: types.StringNull(), envBrand: "vulnetix", want: client.DefaultEndpoint},
+		"env garbage":                   {arg: types.StringNull(), envBrand: "acme", want: "https://www.vulnes.is/api/site/v1"},
 		"argument wins over env":        {arg: types.StringValue("vulnetix"), envBrand: "vulnesis", want: client.DefaultEndpoint},
 		"unknown argument falls to env": {arg: types.StringUnknown(), envBrand: "vulnesis", want: "https://www.vulnes.is/api/site/v1"},
 		"explicit endpoint wins":        {arg: types.StringValue("vulnesis"), configured: "https://staging.example/v1", want: "https://staging.example/v1"},

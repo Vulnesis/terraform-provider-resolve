@@ -1,14 +1,15 @@
-// Package brand selects which brand the provider speaks for: Vulnetix
-// (vulnetix.com, the default) or Vulnesis (vulnes.is). It is adapted from the
+// Package brand selects which brand the provider speaks for: Vulnesis
+// (vulnes.is, the default) or Vulnetix (vulnetix.com). It is adapted from the
 // Vulnetix CLI's pkg/brand.
 //
 // The brand is chosen by the provider's brand argument or, when that is not
 // set, by the VULNETIX_BRAND environment variable (VULNESIS_BRAND is an
 // alias): "vulnetix" or "vulnesis", in any case. Anything else in the
-// environment, or nothing, is Vulnetix, so a configuration behaves exactly as
-// it always has unless the user opts in. Unlike the CLI there is no
-// process-wide brand: each provider configuration resolves its own, so two
-// aliased provider blocks can speak for different brands.
+// environment, or nothing, is Vulnesis: the vulnetix.com hosts are retired,
+// so a configuration speaks for Vulnetix only when the user opts in. Unlike
+// the CLI there is no process-wide brand: each provider configuration
+// resolves its own, so two aliased provider blocks can speak for different
+// brands.
 //
 // Code that builds or shows a vulnetix.com endpoint or link passes it through
 // Brand.URL (or Brand.Host for a bare hostname). Under Vulnetix both are the
@@ -31,9 +32,9 @@ import (
 type Brand int
 
 const (
-	// Vulnetix is vulnetix.com, the default.
+	// Vulnetix is vulnetix.com, selected by "vulnetix".
 	Vulnetix Brand = iota
-	// Vulnesis is vulnes.is.
+	// Vulnesis is vulnes.is, the default.
 	Vulnesis
 )
 
@@ -49,7 +50,8 @@ const (
 )
 
 // Parse reads a brand name, case-insensitively and ignoring surrounding space.
-// ok is false for anything that is not a brand, and b is then Vulnetix.
+// ok is false for anything that is not a brand, and b is then Vulnesis, the
+// default.
 func Parse(s string) (b Brand, ok bool) {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "vulnetix":
@@ -57,7 +59,7 @@ func Parse(s string) (b Brand, ok bool) {
 	case "vulnesis":
 		return Vulnesis, true
 	}
-	return Vulnetix, false
+	return Vulnesis, false
 }
 
 // FromEnv is the brand the environment selects, read now. It is what a
