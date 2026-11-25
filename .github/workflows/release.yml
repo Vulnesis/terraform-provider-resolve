@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   release:
-    runs-on: [self-hosted, Linux, X64, vulnetix-local]
+    runs-on: [self-hosted, Linux, X64, vulnesis-cf]
     # The x64 pool is Amazon Linux 2023 with no apt or sudo, and its image has
     # no gpg or gpgconf, which crazy-max/ghaction-import-gpg needs. Docker is
     # there, so run the job in a Debian image that carries GnuPG (gpg, gpgconf,

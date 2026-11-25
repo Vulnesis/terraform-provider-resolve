@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: [self-hosted, Linux, X64, vulnetix-local]
+    runs-on: [self-hosted, Linux, X64, vulnesis-cf]
     timeout-minutes: 20
     steps:
       # Big Go builds overflow the runner's small /tmp; build in the job's temp.
@@ -47,7 +47,7 @@ jobs:
   acceptance:
     if: github.event_name != 'pull_request'
     needs: test
-    runs-on: [self-hosted, Linux, X64, vulnetix-local]
+    runs-on: [self-hosted, Linux, X64, vulnesis-cf]
     timeout-minutes: 45
     concurrency:
       group: acceptance-tenant
