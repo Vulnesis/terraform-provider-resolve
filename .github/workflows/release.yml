@@ -54,7 +54,7 @@ jobs:
       # git (and so goreleaser and go's VCS stamping) refuses it as dubious.
       - name: Trust the workspace
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - uses: actions/setup-go@v7.0.0
+      - uses: actions/setup-go@v7.1.0
         with:
           go-version-file: go.mod
       - uses: hashicorp/setup-terraform@v4.0.1

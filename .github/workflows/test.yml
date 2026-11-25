@@ -18,7 +18,7 @@ jobs:
       - name: Use the job temp dir for Go
         run: echo "GOTMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-go@v7.0.0
+      - uses: actions/setup-go@v7.1.0
         with:
           go-version-file: go.mod
       # The resource tests drive a real terraform binary against an
@@ -76,7 +76,7 @@ jobs:
         run: echo "GOTMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7.0.1
         if: steps.secrets.outputs.ok == 'true'
-      - uses: actions/setup-go@v7.0.0
+      - uses: actions/setup-go@v7.1.0
         if: steps.secrets.outputs.ok == 'true'
         with:
           go-version-file: go.mod
