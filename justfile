@@ -11,7 +11,7 @@
 #   just public-key   print the armoured public key to paste into the registries
 #   just release 1.0.0  tag v1.0.0 and push it, which runs the Release workflow
 
-repo := "Vulnetix/terraform-provider-resolve"
+repo := "Vulnesis/terraform-provider-resolve"
 key_uid := "Vulnetix Terraform Provider <chris@vulnetix.com>"
 ns := "signing"
 

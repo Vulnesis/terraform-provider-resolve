@@ -69,7 +69,7 @@ func (p *vulnetixProvider) Schema(_ context.Context, _ provider.SchemaRequest, r
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manage Vulnetix configuration as code. Every resource is one " +
 			"`vulnetix.com/v1` config document, generated from the kind schemas in " +
-			"[config-schemas](https://github.com/Vulnetix/config-schemas), and applied through the same " +
+			"[config-schemas](https://github.com/Vulnesis/config-schemas), and applied through the same " +
 			"server-side engine as `vulnetix config apply`.",
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{

@@ -1,12 +1,12 @@
 ---
 page_title: "vulnetix Provider"
 description: |-
-  Manage Vulnetix configuration as code. Every resource is one vulnetix.com/v1 config document, generated from the kind schemas in config-schemas https://github.com/Vulnetix/config-schemas, and applied through the same server-side engine as vulnetix config apply.
+  Manage Vulnetix configuration as code. Every resource is one vulnetix.com/v1 config document, generated from the kind schemas in config-schemas https://github.com/Vulnesis/config-schemas, and applied through the same server-side engine as vulnetix config apply.
 ---
 
 # vulnetix Provider
 
-Manage Vulnetix configuration as code. Every resource is one `vulnetix.com/v1` config document, generated from the kind schemas in [config-schemas](https://github.com/Vulnetix/config-schemas), and applied through the same server-side engine as `vulnetix config apply`.
+Manage Vulnetix configuration as code. Every resource is one `vulnetix.com/v1` config document, generated from the kind schemas in [config-schemas](https://github.com/Vulnesis/config-schemas), and applied through the same server-side engine as `vulnetix config apply`.
 
 Each resource is one config kind. Its arguments are the kind's `spec`, in snake case (`blockMalware` is `block_malware`), beside `name`, `labels` and `annotations` from its `metadata`. Every resource page shows a **Minimal** example (only the required arguments), an **Advanced** example (every argument) and how to import an existing object.
 
